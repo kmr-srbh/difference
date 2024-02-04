@@ -1,40 +1,48 @@
 class Difference:
-    def __init__(self) -> None:
-        pass
+    def __init__(self, original: str, new: str) -> None:
+        self.original = original
+        self.new = new
+        self.ORIGINAL_STRING_LENGTH = len(original)
+        self.NEW_STRING_LENGTH = len(new)
 
-    def get_difference(self, original: str, new: str) -> list[str]:
-        pass
+    def get_longest_common_subsequence(self) -> str:
+        lcs_table = self.get_lcs_table()
+        row = self.ORIGINAL_STRING_LENGTH - 1
+        column = self.NEW_STRING_LENGTH - 1
 
-    def get_lcs_matrix(self, original: str, new: str) -> list[list[int]]:
-        """Returns the Longest Common Subsequence (LCS) matrix of
-        dimension M x N for two strings of length N and M respectively.
+        lcs = str()
+
+        return lcs
+
+    def get_lcs_table(self) -> list[list[int]]:
+        """Returns the Longest Common Subsequence (LCS) table of
+        dimension ORIGINAL_STRING_LENGTH x NEW_STRING_LENGTH where
+        `ORIGINAL_STRING_LENGTH` is the length of `original` and
+        `NEW_STRING_LENGTH` of `new`.
 
         Read more: https://en.wikipedia.org/wiki/Longest_common_subsequence
-        Explanation: https://www.youtube.com/watch?v=NnD96abizww
+        Algorithm explanation: https://www.youtube.com/watch?v=NnD96abizww
 
-        :param M: Length of first string
-        :param N: Length of second string
+        :param original: The version of string before the current version.
+        :param new: The current version of the string.
 
-        :return: LCS Matrix of dimension M x N
+        :return: LCS Matrix of dimension ORIGINAL_STRING_LENGTH x NEW_STRING_LENGTH.
         """
-        M = len(original) + 1
-        N = len(new) + 1
-        lcs_matrix = [[1 for _ in range(N)] for _ in range(M)]
-        for row in range(M):
-            for column in range(N):
-                lcs_matrix[row][0] = 0
-                lcs_matrix[0][column] = 0
-                if original[row - 1] == new[column - 1]:
-                    lcs_matrix[row][column] = lcs_matrix[row - 1][column - 1] + 1
+        lcs_table = [
+            [0 for _ in range(self.NEW_STRING_LENGTH + 1)]
+            for _ in range(self.ORIGINAL_STRING_LENGTH + 1)
+        ]
+        for row in range(1, self.ORIGINAL_STRING_LENGTH + 1):
+            for column in range(1, self.NEW_STRING_LENGTH + 1):
+                if self.original[row - 1] == self.new[column - 1]:
+                    lcs_table[row][column] = lcs_table[row - 1][column - 1] + 1
                 else:
-                    lcs_matrix[row][column] = max(
-                        lcs_matrix[row][column - 1], lcs_matrix[row - 1][column]
+                    lcs_table[row][column] = max(
+                        lcs_table[row][column - 1], lcs_table[row - 1][column]
                     )
-        return lcs_matrix
+        return lcs_table
 
 
 if __name__ == "__main__":
-    difference_object = Difference()
-    matrix = difference_object.get_lcs_matrix("GAC", "AGCAT")
-    for row in matrix:
-        print(row)
+    difference_object = Difference("GAC", "AGCAT")
+    print("LCS:", difference_object.get_longest_common_subsequence())
